@@ -1,0 +1,67 @@
+body {
+    font-family: Arial;
+    background-color: #f2f2f2;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 90%;
+    max-width: 900px;
+    background: white;
+    margin: 20px auto;
+    padding: 15px;
+    border: 1px solid #ddd;
+}
+
+h1, h2 {
+    color: #2c3e50;
+}
+
+img {
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    border: 1px solid #aaa;
+}
+
+/* Links */
+a {
+    color: blue;
+}
+
+/* Top area: photo + info using flex */
+.top {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+
+/* Section cards */
+.section {
+    margin-top: 0;
+    padding: 10px;
+    border: 1px solid #ddd;
+    background: #fafafa;
+}
+
+/* Grid layout for main sections */
+.grid-layout {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+/* Responsive changes for small screens */
+@media (max-width: 700px) {
+    .top {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .grid-layout {
+        grid-template-columns: 1fr;
+    }
+}
