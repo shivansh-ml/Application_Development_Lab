@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Experiments: Classification & Regression</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Experiment 2</h1>
+        
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('classification')">Exp 1: Cat vs Dog</button>
+            <button class="tab-btn" onclick="switchTab('regression')">Exp 2: Stock Prediction</button>
+        </div>
+
+        <div id="classification" class="content-section active">
+            <h2>Image Classification</h2>
+            <p>Upload an image to classify.</p>
+            
+            <div class="upload-area">
+                <input type="file" id="imageInput" accept="image/*">
+                <button onclick="uploadImage()">Classify Image</button>
+            </div>
+
+            <div id="result-container" class="hidden">
+                <img id="preview" src="" alt="Preview">
+                <h3>Prediction: <span id="prediction-text">...</span></h3>
+                <p>Confidence: <span id="confidence-text">...</span></p>
+            </div>
+        </div>
+
+        <div id="regression" class="content-section hidden">
+            <h2>Stock Price Prediction</h2>
+            <p>Enter a stock ticker to predict prices using Linear Regression.</p>
+            
+            <div class="input-group">
+                <input type="text" id="tickerInput" placeholder="Enter Ticker Symbol (e.g. AAPL)">
+                <button onclick="predictStock()">Predict</button>
+            </div>
+
+            <canvas id="stockChart"></canvas>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
