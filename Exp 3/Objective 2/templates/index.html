@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scraper | Minimal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="app-layout">
+        <aside class="sidebar">
+            <div class="brand">
+                <div class="logo-circle"></div>
+                <h1>Scraper</h1>
+            </div>
+            <nav class="nav-menu">
+                <button type="button" class="nav-item active" onclick="switchTab('url-scrape')">
+                    Single URL
+                </button>
+                <button type="button" class="nav-item" onclick="switchTab('topic-search')">
+                    Topic Search
+                </button>
+                <button type="button" class="nav-item" onclick="switchTab('batch-scrape')">
+                    Batch Process
+                </button>
+            </nav>
+            <div class="sidebar-footer">
+                <p>AI Powered v2.0</p>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <!-- URL Tab -->
+            <div id="url-scrape" class="view-section active">
+                <header class="section-header">
+                    <h2>Analyze URL</h2>
+                    <p>Extract and summarize content from a single webpage.</p>
+                </header>
+                <div class="input-card">
+                    <input type="url" id="url-input" placeholder="Paste URL here (e.g., https://example.com)...">
+                    <button type="button" onclick="scrapeUrl()" class="btn-primary">Analyze</button>
+                </div>
+            </div>
+
+            <!-- Search Tab -->
+            <div id="topic-search" class="view-section">
+                <header class="section-header">
+                    <h2>Topic Research</h2>
+                    <p>Search the web and aggregate findings.</p>
+                </header>
+                <div class="input-card">
+                    <input type="text" id="topic-input" placeholder="Enter topic (e.g., Climate Change)...">
+                    <button type="button" onclick="searchAndScrape()" class="btn-primary">Research</button>
+                </div>
+            </div>
+
+            <!-- Batch Tab -->
+            <div id="batch-scrape" class="view-section">
+                <header class="section-header">
+                    <h2>Batch Processing</h2>
+                    <p>Analyze multiple URLs simultaneously.</p>
+                </header>
+                <div class="input-card">
+                    <textarea id="batch-urls" placeholder="Paste URLs (one per line)..."></textarea>
+                    <button type="button" onclick="batchScrape()" class="btn-primary">Process All</button>
+                </div>
+            </div>
+
+            <!-- Output Area -->
+            <div id="loading" class="loading-state hidden">
+                <div class="spinner"></div>
+                <span>Processing data...</span>
+            </div>
+
+            <div id="results" class="results-container hidden">
+                <!-- Content injected by JS -->
+            </div>
+        </main>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
