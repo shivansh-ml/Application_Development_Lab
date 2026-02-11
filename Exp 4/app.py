@@ -8,7 +8,7 @@ app.secret_key = "secret"
 # MySQL config
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "password"
+app.config["MYSQL_PASSWORD"] = "Shivansh@123"
 app.config["MYSQL_DB"] = "flaskdb"
 
 mysql = MySQL(app)
@@ -23,7 +23,7 @@ def login():
         cur.execute("SELECT id, password FROM users WHERE username=%s", (u,))
         user = cur.fetchone()
 
-        if user and check_password_hash(user[1], p):
+        if user and user[1] == p:
             session["user"] = user[0]
             return redirect("/dashboard")
     return render_template("login.html")
