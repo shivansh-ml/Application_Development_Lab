@@ -1,0 +1,8 @@
+<h3>Your Marks: {{ grade[0] if grade else "Not Assigned" }}</h3>
+
+<form action="/reset" method="post">
+  <input name="password" type="password" placeholder="new password">
+  <button>Reset Password</button>
+</form>
+
+<a href="/logout">Logout</a>
