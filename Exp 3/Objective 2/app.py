@@ -7,7 +7,6 @@ from datetime import datetime
 
 app = Flask(__name__)
 
-# --- Configuration & Helpers ---
 PALETTE = {
     'darkest': '#061E29',
     'dark_blue': '#1D546D',

@@ -1,7 +1,6 @@
 import os
 from flask import Flask, render_template, request, jsonify
 from werkzeug.utils import secure_filename
-
 import pandas as pd
 import ollama
 
@@ -21,6 +20,7 @@ os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
 
 qa_chain = None
+active_model = None
 
 # ---------------- HELPERS ----------------
 def load_document(path):
@@ -32,6 +32,10 @@ def load_document(path):
         df = pd.read_excel(path)
         return [{"page_content": df.to_string(), "metadata": {"source": path}}]
     return []
+
+def model_exists(model_name):
+    models = ollama.list()["models"]
+    return any(m["name"] == model_name for m in models)
 
 def build_chain(docs, model):
     splitter = RecursiveCharacterTextSplitter(chunk_size=1000, chunk_overlap=200)
@@ -46,10 +50,10 @@ def build_chain(docs, model):
     prompt = ChatPromptTemplate.from_template(
         """Answer the question using ONLY the context below:
 
-        {context}
+{context}
 
-        Question: {question}
-        Answer:"""
+Question: {question}
+Answer:"""
     )
 
     return (
@@ -66,32 +70,35 @@ def index():
 
 @app.route("/upload", methods=["POST"])
 def upload():
-    global qa_chain
+    global qa_chain, active_model
 
     file = request.files.get("file")
-    model = request.form.get("model", "llama3:latest")
+    model = request.form.get("model")
 
     if not file:
-        return jsonify({"error": "No file"}), 400
+        return jsonify({"error": "No file uploaded"}), 400
 
-    path = os.path.join(UPLOAD_FOLDER, secure_filename(file.filename))
+    if not model_exists(model):
+        return jsonify({"error": f"Model '{model}' not found in Ollama"}), 400
+
+    path = os.path.join(app.config["UPLOAD_FOLDER"], secure_filename(file.filename))
     file.save(path)
 
     docs = load_document(path)
     qa_chain = build_chain(docs, model)
+    active_model = model
 
-    return jsonify({"message": "Document processed successfully"})
+    return jsonify({"message": f"Document indexed using {model}"})
 
 @app.route("/chat", methods=["POST"])
 def chat():
-    if not qa_chain:
-        return jsonify({"response": "Upload a document first."})
+    if qa_chain is None:
+        return jsonify({"response": "⚠️ Upload a document first."})
 
     query = request.json.get("query")
     answer = qa_chain.invoke(query)
     return jsonify({"response": answer})
 
-# ---------------- RUN ----------------
 if __name__ == "__main__":
-    print("🚀 Flask starting on http://127.0.0.1:5000")
+    print("🚀 Flask running at http://127.0.0.1:5000")
     app.run(host="127.0.0.1", port=5000, debug=True)
