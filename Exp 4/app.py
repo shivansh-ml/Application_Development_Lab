@@ -1,63 +1,87 @@
 from flask import Flask, render_template, request, redirect, session
 from flask_mysqldb import MySQL
-from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 app.secret_key = "secret"
 
-# MySQL config
+# MySQL Configuration
 app.config["MYSQL_HOST"] = "localhost"
 app.config["MYSQL_USER"] = "root"
-app.config["MYSQL_PASSWORD"] = "Shivansh@123"
+app.config["MYSQL_PASSWORD"] = "Shivansh@123"   # change if needed
 app.config["MYSQL_DB"] = "flaskdb"
 
 mysql = MySQL(app)
 
+# ---------------- LOGIN ----------------
 @app.route("/", methods=["GET", "POST"])
 def login():
     if request.method == "POST":
-        u = request.form["username"]
-        p = request.form["password"]
+        username = request.form["username"]
+        password = request.form["password"]
 
         cur = mysql.connection.cursor()
-        cur.execute("SELECT id, password FROM users WHERE username=%s", (u,))
+        cur.execute("SELECT id, password FROM users WHERE username=%s", (username,))
         user = cur.fetchone()
 
-        if user and user[1] == p:
-            session["user"] = user[0]
+        if user and user[1] == password:
+            session["user_id"] = user[0]
             return redirect("/dashboard")
+
+        return "Invalid Username or Password"
+
     return render_template("login.html")
 
+
+# ---------------- SIGNUP ----------------
 @app.route("/signup", methods=["POST"])
 def signup():
-    u = request.form["username"]
-    p = generate_password_hash(request.form["password"])
+    username = request.form["username"]
+    password = request.form["password"]
 
     cur = mysql.connection.cursor()
-    cur.execute("INSERT INTO users(username,password) VALUES(%s,%s)", (u, p))
+    cur.execute("INSERT INTO users(username,password) VALUES(%s,%s)",
+                (username, password))
     mysql.connection.commit()
+
     return redirect("/")
 
+
+# ---------------- DASHBOARD ----------------
 @app.route("/dashboard")
 def dashboard():
-    if "user" not in session:
+    if "user_id" not in session:
         return redirect("/")
+
     cur = mysql.connection.cursor()
-    cur.execute("SELECT marks FROM grades WHERE user_id=%s", (session["user"],))
+    cur.execute("SELECT marks FROM grades WHERE user_id=%s",
+                (session["user_id"],))
     grade = cur.fetchone()
+
     return render_template("dashboard.html", grade=grade)
 
+
+# ---------------- RESET PASSWORD ----------------
 @app.route("/reset", methods=["POST"])
 def reset():
-    p = generate_password_hash(request.form["password"])
+    if "user_id" not in session:
+        return redirect("/")
+
+    new_password = request.form["password"]
+
     cur = mysql.connection.cursor()
-    cur.execute("UPDATE users SET password=%s WHERE id=%s", (p, session["user"]))
+    cur.execute("UPDATE users SET password=%s WHERE id=%s",
+                (new_password, session["user_id"]))
     mysql.connection.commit()
+
     return redirect("/dashboard")
 
+
+# ---------------- LOGOUT ----------------
 @app.route("/logout")
 def logout():
     session.clear()
     return redirect("/")
 
-app.run(debug=True)
+
+if __name__ == "__main__":
+    app.run(debug=True)
