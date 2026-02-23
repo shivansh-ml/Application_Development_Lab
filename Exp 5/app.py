@@ -9,7 +9,7 @@ app = Flask(__name__)
 # ==============================
 
 client = genai.Client(
-    api_key="AIzaSyBqMO-_utw075_6GFHf6oUm2LFaRYwL50c"
+    api_key=""
 )
 
 # ==============================
